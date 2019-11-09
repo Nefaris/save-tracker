@@ -1,2 +1,1 @@
-LOCAL_STRAGE=
-CLOUD_STORAGE=
+isaac;C:\Users\Kamil\Desktop\aaalocal;C:\Users\Kamil\Desktop\aaacloud

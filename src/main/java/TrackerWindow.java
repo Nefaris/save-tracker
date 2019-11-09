@@ -13,6 +13,7 @@ public class TrackerWindow extends JFrame {
     private JButton uploadToCloudButton;
     private JButton downloadFromCloudButton;
     private JTextArea textArea1;
+    private JComboBox<GameProfile> comboBox1;
 
     private File cloudStorage;
     private File localStorage;
@@ -23,25 +24,17 @@ public class TrackerWindow extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        comboBox1.addItem(new GameProfile("game1", "c:/local/game1", "c:/cloud/game1"));
+        comboBox1.addItem(new GameProfile("game2", "c:/local/game2", "c:/cloud/game2"));
 
         cloudStorageButton.addActionListener(e -> {
-            JFileChooser jFileChooser = new JFileChooser();
-            jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            jFileChooser.setDialogTitle("Select cloud storage");
-            jFileChooser.showOpenDialog(this);
-            File selectedFile = new File(jFileChooser.getSelectedFile().toString());
-            cloudStorage = selectedFile;
-            textField1.setText(selectedFile.getPath());
+            cloudStorage = FileChooserUtils.getLocation("Select cloud storage", this);
+            textField1.setText(cloudStorage.getPath());
         });
 
         localStorageButton.addActionListener(e -> {
-            JFileChooser jFileChooser = new JFileChooser();
-            jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            jFileChooser.setDialogTitle("Select local storage");
-            jFileChooser.showOpenDialog(this);
-            File selectedFile = new File(jFileChooser.getSelectedFile().toString());
-            localStorage = selectedFile;
-            textField2.setText(selectedFile.getPath());
+            localStorage = FileChooserUtils.getLocation("Select local storage", this);
+            textField2.setText(localStorage.getPath());
         });
 
         uploadToCloudButton.addActionListener(e -> {
