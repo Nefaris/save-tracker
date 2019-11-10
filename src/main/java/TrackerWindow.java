@@ -63,9 +63,9 @@ public class TrackerWindow extends JFrame {
 
             try {
                 FileUtils.copyDirectory(cloudStorage, localStorage);
-                logInfo = "SUCCESS:\t" + new Date() + ": Local < Cloud\n";
+                logInfo = "SUCCESS:    " + new Date() + ": Local < Cloud\n";
             } catch (Exception ex) {
-                logInfo = "ERROR:\t" + new Date() + ": Something went wrong ... Local < Cloud\n";
+                logInfo = "ERROR:      " + new Date() + ": Something went wrong ... Local < Cloud\n";
                 ex.printStackTrace();
             }
 
@@ -117,9 +117,11 @@ public class TrackerWindow extends JFrame {
     private void reloadProfiles() {
         try {
             gameProfiles = GameProfileManager.getAllProfiles();
-            comboBox1.removeAllItems();
-            for (GameProfile gameProfile : gameProfiles) {
-                comboBox1.addItem(gameProfile);
+            if (gameProfiles.size() > 0) {
+                comboBox1.removeAllItems();
+                for (GameProfile gameProfile : gameProfiles) {
+                    comboBox1.addItem(gameProfile);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
