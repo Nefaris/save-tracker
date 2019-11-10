@@ -44,23 +44,33 @@ public class TrackerWindow extends JFrame {
         });
 
         uploadToCloudButton.addActionListener(e -> {
+            String logInfo;
+
             try {
                 FileUtils.copyDirectory(localStorage, cloudStorage);
-                textArea1.append(new Date() + ": Local > Cloud\n");
+                logInfo = "SUCCESS:\t" + new Date() + ": Local > Cloud\n";
             } catch (Exception ex) {
-                textArea1.append(new Date() + ": Something went wrong ... Local > Cloud\n");
+                logInfo = "ERROR:\t" + new Date() + ": Something went wrong ... Local > Cloud\n";
                 ex.printStackTrace();
             }
+
+            textArea1.append(logInfo);
+            ActivityLogger.crateLog(logInfo);
         });
 
         downloadFromCloudButton.addActionListener(e -> {
+            String logInfo;
+
             try {
                 FileUtils.copyDirectory(cloudStorage, localStorage);
-                textArea1.append(new Date() + ": Local < Cloud\n");
+                logInfo = "SUCCESS:\t" + new Date() + ": Local < Cloud\n";
             } catch (Exception ex) {
-                textArea1.append(new Date() + ": Something went wrong ... Local < Cloud\n");
+                logInfo = "ERROR:\t" + new Date() + ": Something went wrong ... Local < Cloud\n";
                 ex.printStackTrace();
             }
+
+            textArea1.append(logInfo);
+            ActivityLogger.crateLog(logInfo);
         });
 
         loadProfileButton.addActionListener(e -> {
