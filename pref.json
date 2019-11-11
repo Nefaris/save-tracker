@@ -1,0 +1,17 @@
+[
+  {
+    "name": "game1",
+    "localStoragePath": "local1",
+    "cloudStoragePath": "cloud1"
+  },
+  {
+    "name": "game2",
+    "localStoragePath": "local2",
+    "cloudStoragePath": "cloud2"
+  },
+  {
+    "name": "game3",
+    "localStoragePath": "local3",
+    "cloudStoragePath": "cloud3"
+  }
+]

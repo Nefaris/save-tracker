@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 public class ActivityLogger {
-
-    public static void crateLog(String logText) {
+    public static void crateLog(Log log) {
         File logFile = new File(Reference.LOG_FILE_PATH);
+        String logText = String.format("%s: %s %s\n", log.getLogType(), log.getDate(), log.getMessage());
 
         if (!logFile.exists()) {
             try {
@@ -23,5 +23,4 @@ public class ActivityLogger {
             e.printStackTrace();
         }
     }
-
 }

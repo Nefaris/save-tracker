@@ -1,89 +1,57 @@
-import org.apache.commons.io.FileUtils;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.MalformedJsonException;
 
 import javax.swing.*;
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 
 public class TrackerWindow extends JFrame {
     private JPanel rootPanel;
-    private JButton cloudStorageButton;
     private JTextField textField1;
-    private JButton localStorageButton;
     private JTextField textField2;
     private JButton uploadToCloudButton;
     private JButton downloadFromCloudButton;
-    private JTextArea textArea1;
+    private JTextArea outputConsole;
     private JComboBox<GameProfile> comboBox1;
-    private JButton loadProfileButton;
     private JButton reloadProfilesButton;
     private JButton openConfigButton;
-    private JButton saveProfileButton;
 
-    private File cloudStorage;
-    private File localStorage;
-    private List<GameProfile> gameProfiles;
+    private GameProfile currentGameProfile;
+    private GameProfileStorage gameProfileStorage;
 
     TrackerWindow() {
         super("Save tracker");
         setSize(600, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        gameProfileStorage = new GameProfileStorage();
         reloadProfiles();
 
-        cloudStorageButton.addActionListener(e -> {
-            cloudStorage = FileChooserUtils.getLocation("Select cloud storage", this);
-            textField1.setText(cloudStorage.getPath());
-        });
-
-        localStorageButton.addActionListener(e -> {
-            localStorage = FileChooserUtils.getLocation("Select local storage", this);
-            textField2.setText(localStorage.getPath());
-        });
-
         uploadToCloudButton.addActionListener(e -> {
-            String logInfo;
-
-            try {
-                FileUtils.copyDirectory(localStorage, cloudStorage);
-                logInfo = "SUCCESS:\t" + new Date() + ": Local > Cloud\n";
-            } catch (Exception ex) {
-                logInfo = "ERROR:\t" + new Date() + ": Something went wrong ... Local > Cloud\n";
-                ex.printStackTrace();
-            }
-
-            textArea1.append(logInfo);
-            ActivityLogger.crateLog(logInfo);
+            Log log = StorageManager.upload(currentGameProfile.getLocalStoragePath(), currentGameProfile.getCloudStoragePath());
+            ActivityLogger.crateLog(log);
+            outputConsole.append(log.toString());
         });
 
         downloadFromCloudButton.addActionListener(e -> {
-            String logInfo;
-
-            try {
-                FileUtils.copyDirectory(cloudStorage, localStorage);
-                logInfo = "SUCCESS:    " + new Date() + ": Local < Cloud\n";
-            } catch (Exception ex) {
-                logInfo = "ERROR:      " + new Date() + ": Something went wrong ... Local < Cloud\n";
-                ex.printStackTrace();
-            }
-
-            textArea1.append(logInfo);
-            ActivityLogger.crateLog(logInfo);
-        });
-
-        loadProfileButton.addActionListener(e -> {
-            String localPath = gameProfiles.get(comboBox1.getSelectedIndex()).getLocalPath();
-            String cloudPath = gameProfiles.get(comboBox1.getSelectedIndex()).getCloudPath();
-            localStorage = new File(localPath);
-            cloudStorage = new File(cloudPath);
-            textField1.setText(localPath);
-            textField2.setText(cloudPath);
+            Log log = StorageManager.download(currentGameProfile.getLocalStoragePath(), currentGameProfile.getCloudStoragePath());
+            ActivityLogger.crateLog(log);
+            outputConsole.append(log.toString());
         });
 
         reloadProfilesButton.addActionListener(e -> {
             reloadProfiles();
+        });
+
+        comboBox1.addItemListener(e -> {
+            if (comboBox1.getItemCount() > 0) {
+                int selextedProfileIndex = comboBox1.getSelectedIndex();
+                textField1.setText(gameProfileStorage.getGameProfile(selextedProfileIndex).getCloudStoragePath());
+                textField2.setText(gameProfileStorage.getGameProfile(selextedProfileIndex).getLocalStoragePath());
+            }
         });
 
         openConfigButton.addActionListener(e -> {
@@ -98,33 +66,39 @@ public class TrackerWindow extends JFrame {
             }
         });
 
-        saveProfileButton.addActionListener(e -> {
-            gameProfiles.get(comboBox1.getSelectedIndex()).setLocalPath(localStorage.getPath());
-            gameProfiles.get(comboBox1.getSelectedIndex()).setLocalPath(cloudStorage.getPath());
-            try {
-                GameProfileManager.saveProfiles(gameProfiles);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            reloadProfiles();
-        });
-
         add(rootPanel);
-        // setJMenuBar(new AppMenu());
         setVisible(true);
     }
 
     private void reloadProfiles() {
+        Log log;
+
         try {
-            gameProfiles = GameProfileManager.getAllProfiles();
-            if (gameProfiles.size() > 0) {
-                comboBox1.removeAllItems();
-                for (GameProfile gameProfile : gameProfiles) {
+            gameProfileStorage.loadStorage();
+            comboBox1.removeAllItems();
+            if (gameProfileStorage.getAlleGameProfiles() != null) {
+                for (GameProfile gameProfile : gameProfileStorage.getAlleGameProfiles()) {
                     comboBox1.addItem(gameProfile);
                 }
+                currentGameProfile = gameProfileStorage.getGameProfile(0);
+                textField1.setText(gameProfileStorage.getGameProfile(0).getCloudStoragePath());
+                textField2.setText(gameProfileStorage.getGameProfile(0).getLocalStoragePath());
+                log = new Log(LogType.INFO, "Reloaded succesfully");
+            } else {
+                log = new Log(LogType.INFO, "There is no configuration in pref.json");
             }
+        } catch (MalformedJsonException | JsonSyntaxException e) {
+            log = new Log(LogType.ERROR, "Json syntax error, check your preferences file");
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            log = new Log(LogType.ERROR, "Unable to find pref.json file");
+            e.printStackTrace();
         } catch (IOException e) {
+            log = new Log(LogType.ERROR, "Unable to read pref.json file");
             e.printStackTrace();
         }
+
+        ActivityLogger.crateLog(log);
+        outputConsole.append(log.toString());
     }
 }

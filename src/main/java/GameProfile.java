@@ -1,12 +1,12 @@
 public class GameProfile {
     private String name;
-    private String localPath;
-    private String cloudPath;
+    private String localStoragePath;
+    private String cloudStoragePath;
 
     public GameProfile(String name, String localPath, String cloudPath) {
         this.name = name;
-        this.localPath = localPath;
-        this.cloudPath = cloudPath;
+        this.localStoragePath = localPath;
+        this.cloudStoragePath = cloudPath;
     }
 
     public String getName() {
@@ -17,20 +17,20 @@ public class GameProfile {
         this.name = name;
     }
 
-    public String getLocalPath() {
-        return localPath;
+    public String getLocalStoragePath() {
+        return localStoragePath;
     }
 
-    public void setLocalPath(String localPath) {
-        this.localPath = localPath;
+    public void setLocalStoragePath(String localStoragePath) {
+        this.localStoragePath = localStoragePath;
     }
 
-    public String getCloudPath() {
-        return cloudPath;
+    public String getCloudStoragePath() {
+        return cloudStoragePath;
     }
 
-    public void setCloudPath(String cloudPath) {
-        this.cloudPath = cloudPath;
+    public void setCloudStoragePath(String cloudStoragePath) {
+        this.cloudStoragePath = cloudStoragePath;
     }
 
     @Override

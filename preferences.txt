@@ -1,3 +1,0 @@
-game1;C:\Users\Username\Desktop\aaalocal1;C:\Users\Username\Desktop\aaacloud1
-game2;C:\Users\Username\Desktop\aaalocal2;C:\Users\Username\Desktop\aaacloud2
-game3;C:\Users\Username\Desktop\aaalocal3;C:\Users\Username\Desktop\aaacloud3
