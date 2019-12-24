@@ -5,3 +5,5 @@ preferences.txt
 sketch.txt
 /out/
 /out/
+/src/main/resources/META-INF/
+out/artifacts/save_tracker_jar/save-tracker.jar
