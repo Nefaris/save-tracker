@@ -10,6 +10,7 @@ public class StorageManager {
         Log log;
 
         try {
+            FileUtils.cleanDirectory(cloudDir);
             FileUtils.copyDirectory(localDir, cloudDir);
             log = new Log(LogType.SUCCES, "Uploaded to cloud storage");
         } catch (IOException e) {
@@ -26,6 +27,7 @@ public class StorageManager {
         Log log;
 
         try {
+            FileUtils.cleanDirectory(localDir);
             FileUtils.copyDirectory(cloudDir, localDir);
             log = new Log(LogType.SUCCES, "Downloaded from cloud storage");
         } catch (IOException e) {
